@@ -1,0 +1,213 @@
+﻿									Coursework 1 Programming languages
+
+	Question 1:
+	
+	
+	- Represent a complex integer as an element of the datatype
+	  datatype cint = CI of int * int.
+	  (So CI(4,5) represents 4+5i.)
+
+	  Implement functions cadd and cmult of type cint * cint -> cint representing complex integer addition and multiplication.  
+
+	  For instance,
+	  cadd(CI(1,0),CI(0,1))
+	  should compute
+	  CI(1,1).
+
+	-function cadd:
+		
+		datatype cint  = CI of int*int;
+		fun cadd (CI(x1,y1), CI(x2,y2))= CI((x1+x2),(y1+y2));
+		(*val cadd = fn: cint * cint -> cint*);
+	
+	The function cadd takes to imaginary numbers, then it adds the two interger parts together and adds the 
+	two imaginary parts together, in order to get the sum of the two imaginary numbers.
+	
+	(*Test1 question example: (should return: CI(1,1))*)
+	cadd(CI(1,0),CI(0,1));
+	
+	(*Test2 returns: CI(7,9)*)
+	cadd(CI(4,2),CI(3,7));
+	
+	(*Test3 returns: CI(6,4)*)
+	cadd(CI(3,0),CI(3,4));
+	
+	
+	-function cmult:
+		
+		datatype cint  = CI of int*int;
+		fun cmult(CI(x1,y1),CI(x2,y2))= CI((x1*x2-y1*y2),(x1*y2+y1*x2));
+		(*val cmult = fn: cint * cint -> cint*);
+	
+	The function cmult takes two complex numbers. Since i²=-1, the product of the two imaginary parts will turn into 
+	integers(for example: 5i * 2i = -10). The rest of the operation goes like a normal multiplication.
+	
+	(*Test1 retuns: CI(~18,39)*)
+	cmult(CI(4,5),CI(3,6));
+	
+	(*Test2 returns: CI(0,27)*)
+	cmult(CI(0,3),CI(9,0));
+	
+	(*Test3 returns: CI(19,67)*)
+	cmult(CI(4,9),CI(7,1));
+	
+	
+	
+	(***************************************************************)
+	
+	Question 2:
+	
+	-An integer sequence is an element of
+	type intseq = int list.
+	(So intseq is a type alias for a list of integers.)
+
+	Implement recursive functions seqadd and seqmult of type intseq * intseq -> intseq that implement pointwise addition and multiplication of integer sequences.
+
+	For instance
+	seqadd([1,2,3],[~1,2,2])
+	should compute
+	[0,4,5]
+	Do not write error-handling code to handle the cases that sequences have different lengths.
+	
+	type intseq=int list;
+	fun seqadd ([]:intseq,[]:intseq)=[]:intseq
+	| seqadd ((head1::tail1):intseq,(head2::tail2):intseq)= (head1+head2)::(seqadd((tail1:intseq),(tail2:intseq)):intseq);
+	
+	This function takes in a tuple of lists which are here called intseq. If both intseqs are empty it will return an empty intseq. 
+	Otherwise it takes the two intseqs and always adds the two heads together, the heads always change because the function recursivley goes through the list.
+	When entering the function it will state that matches are not exhaustive, this comes up because we didn't set a case when the lenghts of the sequences are different.
+	
+	(*Test1 retuns: [6,8,10])
+	seqadd ([1,2,3],[5,6,7]);
+	
+	(*Test2 retuns: [10,10,10])
+	seqadd ([4,5,6],[6,5,4]);
+
+	(*Test3 retuns: [0,9,2]*)
+	seqadd ([0,7,~1],[0,2,3]);
+	
+	type intseq=int list;
+	fun seqmult ([]:intseq,[]:intseq)=[]:intseq
+	 | seqmult ((head1::tail1):intseq,(head2::tail2):intseq)= (head1*head2)::(seqmult((tail1:intseq),(tail2:intseq)):intseq);
+	
+	This function returns an empty intseq if both lists,which have been turned into intseqs, inside the tuple are empty.
+	Otherwise it takes the two intseqs and always multiplies the two heads together, the heads always change because the function recursivley goes through the list.
+	When entering the function it will state that matches are not exhaustive, this comes up because we didn't set a case when the lenghts of the sequences are different.
+	
+	(*Test1 retuns: [4,20,0])
+	seqmult ([2,5,300],[2,4,0]);
+	
+	(*Test2 retuns: [24,6,81])
+	seqmult ([12,3,9],[2,2,9]);
+
+	(*Test3 retuns: [49,64,35]*)
+	seqmult ([7,8,5],[7,8,7]);
+	
+	  (*****************************************************************)
+	
+	Question 3:
+	
+	type intseq=int list;
+	datatype intmatrix = IM of intseq list;
+	fun ismatrix (IM[])=true
+        |ismatrix(IM[x])=true
+		|ismatrix(IM[(head1::tail1),(head2::tail2)])=if (length (head1::tail1))=(length (head2::tail2))then true  else false;
+	
+	type intseq=int list;
+	fun ismatrix (IM[])=true
+        |ismatrix(IM[x])=true
+		|ismatrix(IM[(head::tail)])=head = 0 andalso ismatrix tail;
+
+	type intseq=int list;
+	datatype intmatrix =IM of intseq list;
+	fun matrixshape (IM[])= (0,0)
+	| matrixshape (IM[(head::tail)]) = ((1 + length (tail)),(1));
+	
+	fun shape (head::tail)= (length head),(length head:tail)
+	
+	type intseq=int list;
+	datatype intmatrix =IM of intseq list;
+	fun matrixadd (IM[[]],IM[[]])=IM[[]];
+	| matrixadd (IM[[]])
+	(*****************************************************************)
+
+	
+	Question 4:
+	
+	The ML type system  is a Hindley-Milner type system which is a system that can tell the user the general type
+	of the whole program, without the user giving any hints about the types of the program.
+	For example: 5*4; will return: val it = 20: int
+	It knows exactly that 5 and 4 are integers.
+	
+	In ML it is possible to use ad hoc and parametric polymorphism. 
+	Ad hoc polymorphism is where a operation does not function the same for different types, this is also called overloading.
+	For example: '+' this operator is overloaded because it works for numerical types, for 2 ints or 2 reals but it cannot calculate 
+	int+real, such as 5.4+4 (will return: Static error).
+	In the normal world of maths this operation would be possible and the sum of those two numbers would be 9.4.
+	Parametric polymorphism is used for a function which works the same for differnt types, it doesn't care what you give it.
+	For example: The length function will give you an int for the number of elements in an array, whether they are tuples,int,
+	strings, int and string or others, it will always give the same type of result.
+	For example: val mylist= [1,2,3,4];  and length mylist; will return: val it = 4: int
+				 val myStrIntList= [(4,"why"),(5,"who"),(8,"where")]; and length myStrIntList; will return: val it =3:int
+	The length function doesn't care how the list looks like all it will do is return the number of elements that list has nothing more.
+	So the difference between ad hoc and parametric polymorphism is that ad hoc need the same types to be able to work where as
+	parametric does not mind what it functions with.
+	
+	Pair types is something which apears in lists, a pair can have different types which means that both elements of a pair do not
+	necessarily need to have the same type to work but the pairs in a list need to all have the same type.
+	For example: You can have a list only containing integer pairs: [1,2,3,4].
+				 Or a list with pairs of intergers and strings:[(4,"why"),(5,"who"),(8,"where")].
+				 But pairs in a list cannot be different: [(4,"why"),(5,"who"),(8,3)], this is not possible because the last pair is 
+				 different and does not conform to the rest of the list as it is an integer pair and not a integer,string pair.
+				 
+	Function types will always stay the same, which means that when a function is created and the user tries to call it, he has to enter
+	the exact types the function is expecting and not any other but he can try and cast the values he wishes to enter into the function.
+	For example: fun intadd x y = x+y; 
+				For this function the user cannot add 2 reals together nor can he add two strings but he can cast 2 reals to integer (usnig:floor).
+				intadd (floor(4.4)) (floor(5.5)); this will return 9.
+	Equality types are the types which allow the user to compare any other types such as "=" and "<>". Using these types the
+	user can compare any two elements but both to be compared elements need to have the same type so for example string and string, int and int,...
+	There are exceptions though reals cannot be compared by "="or"<>" because reals are not absolute for example: 4.4 can also be 4.4676543357, that
+	is the reason why reals cannot be use the equality types. Moreover functions and streams can not be compared by equality  types, because functions
+	could be implemented differently but still output the same results, these equality types cannot see that as they are fairly trivial.
+	
+	Type alias is only the fact of assigning a name to a type and using the assigned name instead of using the type. 
+	For example: type marbles= int;
+				 So now the user might want to use marbeles for his next function instead of int because he decided his function should be like a game
+				 of marbles.
+				 fun play (x:marbles) (y:marbles)= (x-y);
+				 
+	Datatype declaration is the action of making a new type, something which doesn't exist yet in the world of ML.
+	For Example: datatype cint= CI of int *int; this just added complex numbers to ML.
+	The difference between the two, is that type aliases only personalize the existing types to fit the user's will, wherease datatype declaration add 
+	a new type to the type spectre of ML.
+	
+	
+	(********************************************************************)
+	
+	Question 5:
+	
+	fun Q5a f x y = f(x,y);
+	(*val now = fn:  ('a * 'b -> 'c) -> 'a -> 'b -> 'c*)
+	This function takes three variables and then 
+
+		
+		
+	fun Q5b f(x,y)= f x y;
+	(*val Q5a = fn: ('a -> 'b -> 'c) -> 'a * 'b -> 'c*)
+
+	There is a part called A and one called B.
+	In the first function it's like fun now A=B;
+	And the second function is like fun Q5b B=A;
+	This question is very cool because the two functions are just the swapped version of each other.
+	
+	(********************************************************************)
+	
+	Question 6:
+	1) fun church 0 x =x
+	     | church n x =x;
+	(*val church = fn: int -> 'a -> 'a*)
+
+	
+	fun church (x: 'a) (y:'a) = 0
+		| church (x:'a) (y:a') z= z;
